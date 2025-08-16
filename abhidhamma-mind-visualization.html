@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마음의 은하계 - 오비탈 구조</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #0a0a2e 0%, #16213e 30%, #0f3460 60%, #000511 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 5, 17, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 380px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        
+        #info h2 {
+            margin: 0 0 20px 0;
+            color: #ffffff;
+            font-size: 22px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        
+        #info .main-mind {
+            background: linear-gradient(135deg, #ff6ec7, #ffd700, #00ffff);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 30px rgba(255, 110, 199, 0.5);
+        }
+        
+        .orbital-info {
+            margin: 12px 0;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 13px;
+            border-left: 4px solid;
+            backdrop-filter: blur(10px);
+        }
+        
+        .s-orbital { 
+            background: rgba(255, 215, 0, 0.2); 
+            border-left-color: #ffd700;
+            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.1);
+        }
+        .p-orbital { 
+            background: rgba(0, 255, 255, 0.2); 
+            border-left-color: #00ffff;
+            box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+        .d-orbital { 
+            background: rgba(68, 255, 68, 0.2); 
+            border-left-color: #44ff44;
+            box-shadow: inset 0 0 20px rgba(68, 255, 68, 0.1);
+        }
+        .f-orbital { 
+            background: rgba(138, 43, 226, 0.2); 
+            border-left-color: #8a2be2;
+            box-shadow: inset 0 0 20px rgba(138, 43, 226, 0.1);
+        }
+        
+        #selected-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 5, 17, 0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 450px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 5, 17, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            z-index: 100;
+        }
+        
+        button {
+            margin: 8px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff6ec7, #bb6bd9);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(255, 110, 199, 0.3);
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #e055a8, #9c59b8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 110, 199, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="info">
+            <h2>마음의 은하계</h2>
+            <div class="main-mind">
+                욕계선한 마음 핵<br>
+                <small>기쁨+지혜+적극적</small>
+            </div>
+            
+            <div class="orbital-info s-orbital">
+                <strong>S 궤도 - 보편적 마음상태 (7개)</strong><br>
+                접촉, 느낌, 인식, 의도, 한마음, 생명력, 마음기울임<br>
+                <small>모든 의식의 기본 구성요소들</small>
+            </div>
+            <div class="orbital-info p-orbital">
+                <strong>P 궤도 - 특별한 마음상태 (6개)</strong><br>
+                시작적용, 지속숙고, 결심, 정진, 희열, 욕구<br>
+                <small>특정 조건에서 나타나는 정신 요소들</small>
+            </div>
+            <div class="orbital-info d-orbital">
+                <strong>D 궤도 - 아름다운 마음상태 (18개)</strong><br>
+                믿음, 염, 부끄러움, 양심, 자애, 연민 등<br>
+                <small>선한 마음에 함께하는 고귀한 요소들</small>
+            </div>
+            <div class="orbital-info f-orbital">
+                <strong>F 궤도 - 지혜 (1개)</strong><br>
+                통찰지혜(Paññā)<br>
+                <small>사성제를 꿰뚫는 최고의 정신 요소</small>
+            </div>
+        </div>
+        
+        <div id="controls">
+            <button id="rotateBtn">은하 회전</button>
+            <button id="resetBtn">시점 초기화</button>
+            <button id="orbitalsBtn">궤도 표시</button>
+            <button id="autoTourBtn">자동 설명 시작</button>
+            <button id="stopTourBtn">자동 설명 중지</button>
+            <button id="pulseBtn">핵 펄스</button>
+        </div>
+        
+        <div id="selected-info">
+            <h3 id="selected-title"></h3>
+            <p id="selected-description"></p>
+            <div id="selected-orbital"></div>
+        </div>
+    </div>
+
+    <script>
+        // 마음상태들의 정확한 궤도 배치
+        var mindOrbitals = {
+            // 핵 - 중심 마음
+            nucleus: {
+                name: "욕계선한 마음",
+                description: "기쁨이 함께하고, 지혜가 함께하며, 적극적인 선한 마음. 이 특별한 의식 순간의 핵심.",
+                position: [0, 0, 0],
+                size: 1.0,
+                color: 0xff1493
+            },
+            
+            // S 궤도 - 보편적 마음상태 (7개)
+            s_orbital: [
+                { name: "접촉 (Phassa)", description: "감각기관과 대상, 의식의 접촉", angle: 0 },
+                { name: "느낌 (Vedanā)", description: "즐거운 느낌 - 기쁨의 본질", angle: 51.4 },
+                { name: "인식 (Saññā)", description: "대상을 분별하고 기억하는 작용", angle: 102.8 },
+                { name: "의도 (Cetanā)", description: "의지적 행동의 근본", angle: 154.2 },
+                { name: "한마음 (Ekaggatā)", description: "마음을 하나로 집중시키는 작용", angle: 205.6 },
+                { name: "생명력 (Jīvitindriya)", description: "정신적 생명력", angle: 257.0 },
+                { name: "마음기울임 (Manasikāra)", description: "주의를 기울이는 작용", angle: 308.4 }
+            ],
+            
+            // P 궤도 - 특별한 마음상태 (6개)
+            p_orbital: [
+                { name: "시작적용 (Vitakka)", description: "사고를 시작하고 적용하는 작용", angle: 0, axis: 'xy' },
+                { name: "지속숙고 (Vicāra)", description: "사고를 지속하고 숙고하는 작용", angle: 60, axis: 'xy' },
+                { name: "결심 (Adhimokkha)", description: "확고한 결정과 확신", angle: 120, axis: 'xz' },
+                { name: "정진 (Viriya)", description: "노력과 에너지", angle: 180, axis: 'xz' },
+                { name: "희열 (Pīti)", description: "기쁨과 환희의 정신적 즐거움", angle: 240, axis: 'yz' },
+                { name: "욕구 (Chanda)", description: "선한 것에 대한 원함과 의욕", angle: 300, axis: 'yz' }
+            ],
+            
+            // D 궤도 - 아름다운 마음상태 (18개)
+            d_orbital: [
+                { name: "믿음 (Saddhā)", description: "삼보에 대한 신뢰와 확신", angle: 0, suborbital: 'd1' },
+                { name: "염 (Sati)", description: "알아차림과 기억, 마음챙김", angle: 20, suborbital: 'd1' },
+                { name: "부끄러움 (Hiri)", description: "잘못에 대한 부끄러움", angle: 40, suborbital: 'd1' },
+                { name: "양심 (Ottappa)", description: "잘못에 대한 양심", angle: 60, suborbital: 'd2' },
+                { name: "탐욕없음 (Alobha)", description: "욕심과 탐착이 없는 상태", angle: 80, suborbital: 'd2' },
+                { name: "성냄없음 (Adosa)", description: "성냄과 미움이 없는 자애", angle: 100, suborbital: 'd2' },
+                { name: "중사 (Tatramajjhattatā)", description: "평온하고 균형잡힌 마음", angle: 120, suborbital: 'd3' },
+                { name: "몸의고요함 (Kāyapassaddhi)", description: "정신요소들의 고요함", angle: 140, suborbital: 'd3' },
+                { name: "마음의고요함 (Cittapassaddhi)", description: "마음의 평온함", angle: 160, suborbital: 'd3' },
+                { name: "몸의가벼움 (Kāyalahutā)", description: "정신요소들의 가벼움", angle: 180, suborbital: 'd4' },
+                { name: "마음의가벼움 (Cittalahutā)", description: "마음의 가벼움과 민첩함", angle: 200, suborbital: 'd4' },
+                { name: "몸의유연함 (Kāyamudutā)", description: "정신요소들의 유연함", angle: 220, suborbital: 'd4' },
+                { name: "마음의유연함 (Cittamudutā)", description: "마음의 유연함", angle: 240, suborbital: 'd5' },
+                { name: "몸의적합성 (Kāyakammaññatā)", description: "정신요소들의 적합성", angle: 260, suborbital: 'd5' },
+                { name: "마음의적합성 (Cittakammaññatā)", description: "마음의 적합성", angle: 280, suborbital: 'd5' },
+                { name: "몸의올바름 (Kāyaujukatā)", description: "정신요소들의 정직함", angle: 300, suborbital: 'd6' },
+                { name: "마음의올바름 (Cittaujukatā)", description: "마음의 정직함", angle: 320, suborbital: 'd6' },
+                { name: "자애 (Mettā)", description: "모든 존재에 대한 사랑", angle: 340, suborbital: 'd6' }
+            ],
+            
+            // F 궤도 - 지혜 (1개)
+            f_orbital: [
+                { name: "지혜 (Paññā)", description: "사성제를 이해하는 올바른 통찰력과 지혜. 이 마음의 가장 고귀한 특성", angle: 0 }
+            ]
+        };
+
+        // Three.js 설정
+        var scene, camera, renderer, raycaster, mouse;
+        var nucleusSphere;
+        var sOrbitals = [], pOrbitals = [], dOrbitals = [], fOrbitals = [];
+        var orbitalRings = [];
+        var allSpheres = [];
+        var isRotating = true;
+        var showOrbitals = true;
+        var isPulsing = false;
+        
+        // 자동 투어 관련 변수들
+        var autoTourInterval = null;
+        var currentTourIndex = 0;
+        var autoTourActive = false;
+        var tourSequence = [];
+
+        function init() {
+            scene = new THREE.Scene();
+            
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(15, 15, 15);
+            camera.lookAt(0, 0, 0);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000511, 1);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('container').appendChild(renderer.domElement);
+            
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+            
+            setupLighting();
+            createStarField();
+            createMindStructure();
+            createOrbitalRings();
+            
+            window.addEventListener('resize', onWindowResize);
+            renderer.domElement.addEventListener('click', onMouseClick);
+            renderer.domElement.addEventListener('mousemove', onMouseMove);
+            
+            // 버튼 이벤트 연결
+            document.getElementById('rotateBtn').addEventListener('click', toggleRotation);
+            document.getElementById('resetBtn').addEventListener('click', resetView);
+            document.getElementById('orbitalsBtn').addEventListener('click', toggleOrbitals);
+            document.getElementById('autoTourBtn').addEventListener('click', startAutoTour);
+            document.getElementById('stopTourBtn').addEventListener('click', stopAutoTour);
+            document.getElementById('pulseBtn').addEventListener('click', pulseCenter);
+            
+            animate();
+        }
+
+        function setupLighting() {
+            var ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+            scene.add(ambientLight);
+            
+            var directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(20, 20, 10);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            
+            // 중심에서 나오는 빛
+            var centerLight = new THREE.PointLight(0xff1493, 1, 50);
+            centerLight.position.set(0, 0, 0);
+            scene.add(centerLight);
+        }
+
+        function createStarField() {
+            var starsGeometry = new THREE.BufferGeometry();
+            var starsMaterial = new THREE.PointsMaterial({ 
+                color: 0xffffff, 
+                size: 0.1,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            var starsVertices = [];
+            for (var i = 0; i < 3000; i++) {
+                var x = (Math.random() - 0.5) * 200;
+                var y = (Math.random() - 0.5) * 200;
+                var z = (Math.random() - 0.5) * 200;
+                starsVertices.push(x, y, z);
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            var stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+        }
+
+        function createMindStructure() {
+            // 핵 생성
+            var nucleusGeometry = new THREE.SphereGeometry(1.0, 32, 32);
+            var nucleusMaterial = new THREE.MeshPhongMaterial({
+                color: 0xff1493,
+                emissive: 0xff1493,
+                emissiveIntensity: 0.3,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            nucleusSphere = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
+            nucleusSphere.userData = mindOrbitals.nucleus;
+            scene.add(nucleusSphere);
+            allSpheres.push(nucleusSphere);
+            
+            // S 궤도 (반지름 3)
+            createOrbitalElectrons(mindOrbitals.s_orbital, 3, 0xffd700, sOrbitals, 's');
+            
+            // P 궤도 (반지름 5)
+            createOrbitalElectrons(mindOrbitals.p_orbital, 5, 0x00ffff, pOrbitals, 'p');
+            
+            // D 궤도 (반지름 7-9)
+            createComplexOrbital(mindOrbitals.d_orbital, 0x44ff44, dOrbitals, 'd');
+            
+            // F 궤도 (반지름 12)
+            createOrbitalElectrons(mindOrbitals.f_orbital, 12, 0x8a2be2, fOrbitals, 'f');
+        }
+
+        function createOrbitalElectrons(electrons, radius, color, container, orbitalType) {
+            for (var i = 0; i < electrons.length; i++) {
+                var electron = electrons[i];
+                var geometry = new THREE.SphereGeometry(0.25, 16, 16);
+                var material = new THREE.MeshPhongMaterial({
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity: 0.2,
+                    transparent: true,
+                    opacity: 0.85
+                });
+                
+                var sphere = new THREE.Mesh(geometry, material);
+                
+                if (orbitalType === 's') {
+                    var angle = (electron.angle * Math.PI) / 180;
+                    sphere.position.set(
+                        radius * Math.cos(angle),
+                        radius * Math.sin(angle) * 0.3,
+                        radius * Math.sin(angle)
+                    );
+                } else if (orbitalType === 'p') {
+                    var angle = (electron.angle * Math.PI) / 180;
+                    if (electron.axis === 'xy') {
+                        sphere.position.set(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                    } else if (electron.axis === 'xz') {
+                        sphere.position.set(radius * Math.cos(angle), 0, radius * Math.sin(angle));
+                    } else {
+                        sphere.position.set(0, radius * Math.cos(angle), radius * Math.sin(angle));
+                    }
+                } else if (orbitalType === 'f') {
+                    var angle = (electron.angle * Math.PI) / 180;
+                    sphere.position.set(
+                        radius * Math.cos(angle),
+                        radius * Math.sin(angle) * Math.cos(angle),
+                        radius * Math.sin(angle) * Math.sin(angle)
+                    );
+                }
+                
+                sphere.userData = { 
+                    name: electron.name, 
+                    description: electron.description, 
+                    orbital: orbitalType 
+                };
+                container.push(sphere);
+                allSpheres.push(sphere);
+                scene.add(sphere);
+            }
+        }
+
+        function createComplexOrbital(electrons, color, container, orbitalType) {
+            for (var i = 0; i < electrons.length; i++) {
+                var electron = electrons[i];
+                var geometry = new THREE.SphereGeometry(0.22, 16, 16);
+                var material = new THREE.MeshPhongMaterial({
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity: 0.15,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                var sphere = new THREE.Mesh(geometry, material);
+                
+                // D 궤도의 복잡한 모양 구현
+                var angle = (electron.angle * Math.PI) / 180;
+                var subOrbital = electron.suborbital;
+                var radius = 7 + Math.random() * 2;
+                
+                switch(subOrbital) {
+                    case 'd1':
+                        sphere.position.set(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                        break;
+                    case 'd2':
+                        sphere.position.set(radius * Math.cos(angle), 0, radius * Math.sin(angle));
+                        break;
+                    case 'd3':
+                        sphere.position.set(0, radius * Math.cos(angle), radius * Math.sin(angle));
+                        break;
+                    case 'd4':
+                        sphere.position.set(radius * Math.cos(angle) * 0.7, radius * Math.sin(angle) * 0.7, radius * 0.7);
+                        break;
+                    case 'd5':
+                        sphere.position.set(radius * Math.cos(angle) * 0.7, radius * 0.7, radius * Math.sin(angle) * 0.7);
+                        break;
+                    case 'd6':
+                        sphere.position.set(radius * 0.7, radius * Math.cos(angle) * 0.7, radius * Math.sin(angle) * 0.7);
+                        break;
+                }
+                
+                sphere.userData = { 
+                    name: electron.name, 
+                    description: electron.description, 
+                    orbital: orbitalType 
+                };
+                container.push(sphere);
+                allSpheres.push(sphere);
+                scene.add(sphere);
+            }
+        }
+
+        function createOrbitalRings() {
+            var ringGeometries = [
+                new THREE.RingGeometry(2.8, 3.2, 64),
+                new THREE.RingGeometry(4.8, 5.2, 64),
+                new THREE.RingGeometry(6.5, 9.5, 64),
+                new THREE.RingGeometry(11.8, 12.2, 64)
+            ];
+            
+            var colors = [0xffd700, 0x00ffff, 0x44ff44, 0x8a2be2];
+            
+            for (var i = 0; i < ringGeometries.length; i++) {
+                var geometry = ringGeometries[i];
+                var material = new THREE.MeshBasicMaterial({
+                    color: colors[i],
+                    transparent: true,
+                    opacity: 0.1,
+                    side: THREE.DoubleSide
+                });
+                
+                var ring = new THREE.Mesh(geometry, material);
+                ring.rotation.x = Math.PI / 2 + (Math.random() - 0.5) * 0.3;
+                ring.rotation.y = (Math.random() - 0.5) * 0.3;
+                orbitalRings.push(ring);
+                scene.add(ring);
+            }
+        }
+
+        function setupTourSequence() {
+            tourSequence = [];
+            for (var i = 0; i < allSpheres.length; i++) {
+                if (allSpheres[i] !== nucleusSphere) {
+                    tourSequence.push(allSpheres[i]);
+                }
+            }
+        }
+
+        function startAutoTour() {
+            if (autoTourActive) return;
+            
+            setupTourSequence();
+            
+            if (tourSequence.length === 0) {
+                alert('마음상태들이 아직 로드되지 않았습니다. 잠시 후 다시 시도해주세요.');
+                return;
+            }
+            
+            autoTourActive = true;
+            currentTourIndex = 0;
+            
+            showMindStateAtIndex(0);
+            
+            autoTourInterval = setInterval(function() {
+                currentTourIndex++;
+                
+                if (currentTourIndex >= tourSequence.length) {
+                    stopAutoTour();
+                    document.getElementById('selected-info').style.display = 'none';
+                    return;
+                }
+                
+                showMindStateAtIndex(currentTourIndex);
+            }, 5000);
+        }
+        
+        function stopAutoTour() {
+            if (autoTourInterval) {
+                clearInterval(autoTourInterval);
+                autoTourInterval = null;
+            }
+            autoTourActive = false;
+            currentTourIndex = 0;
+            
+            resetAllSpheres();
+            document.getElementById('selected-info').style.display = 'none';
+        }
+        
+        function showMindStateAtIndex(index) {
+            if (index >= tourSequence.length) return;
+            
+            var sphere = tourSequence[index];
+            var data = sphere.userData;
+            
+            resetAllSpheres();
+            
+            var scale = 1.5;
+            sphere.scale.set(scale, scale, scale);
+            sphere.material.emissiveIntensity = 0.7;
+            
+            document.getElementById('selected-title').textContent = data.name || '마음상태';
+            document.getElementById('selected-description').textContent = data.description || '설명이 없습니다.';
+            document.getElementById('selected-orbital').textContent = '진행: ' + (index + 1) + '/' + tourSequence.length;
+            document.getElementById('selected-info').style.display = 'block';
+        }
+
+        function resetAllSpheres() {
+            for (var i = 0; i < allSpheres.length; i++) {
+                var sphere = allSpheres[i];
+                sphere.scale.set(1, 1, 1);
+                if (sphere === nucleusSphere) {
+                    sphere.material.emissiveIntensity = 0.3;
+                } else {
+                    sphere.material.emissiveIntensity = 0.2;
+                }
+            }
+        }
+
+        function onMouseMove(event) {
+            if (autoTourActive) return;
+            
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObjects(allSpheres);
+            
+            resetAllSpheres();
+            
+            if (intersects.length > 0) {
+                var sphere = intersects[0].object;
+                var scale = sphere === nucleusSphere ? 1.2 : 1.5;
+                sphere.scale.set(scale, scale, scale);
+                sphere.material.emissiveIntensity = 0.5;
+                document.body.style.cursor = 'pointer';
+            } else {
+                document.body.style.cursor = 'default';
+            }
+        }
+
+        function onMouseClick(event) {
+            if (autoTourActive) return;
+            
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObjects(allSpheres);
+            
+            if (intersects.length > 0) {
+                var sphere = intersects[0].object;
+                var data = sphere.userData;
+                
+                document.getElementById('selected-title').textContent = data.name;
+                document.getElementById('selected-description').textContent = data.description;
+                document.getElementById('selected-orbital').textContent = '궤도: ' + (data.orbital ? data.orbital.toUpperCase() : '핵');
+                document.getElementById('selected-info').style.display = 'block';
+            } else {
+                document.getElementById('selected-info').style.display = 'none';
+            }
+        }
+
+        function toggleRotation() {
+            isRotating = !isRotating;
+        }
+
+        function resetView() {
+            camera.position.set(15, 15, 15);
+            camera.lookAt(0, 0, 0);
+        }
+
+        function toggleOrbitals() {
+            showOrbitals = !showOrbitals;
+            for (var i = 0; i < orbitalRings.length; i++) {
+                orbitalRings[i].visible = showOrbitals;
+            }
+        }
+
+        function pulseCenter() {
+            isPulsing = !isPulsing;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            var time = Date.now() * 0.001;
+            
+            if (isRotating) {
+                camera.position.x = Math.cos(time * 0.1) * 20;
+                camera.position.z = Math.sin(time * 0.1) * 20;
+                camera.lookAt(0, 0, 0);
+            }
+            
+            if (isPulsing && nucleusSphere) {
+                var scale = 1 + 0.1 * Math.sin(time * 3);
+                nucleusSphere.scale.set(scale, scale, scale);
+                nucleusSphere.material.emissiveIntensity = 0.3 + 0.2 * Math.sin(time * 3);
+            }
+            
+            // 궤도 회전
+            for (var i = 0; i < sOrbitals.length; i++) {
+                var sphere = sOrbitals[i];
+                var angle = time * 0.5 + (i * Math.PI * 2) / 7;
+                var radius = 3;
+                sphere.position.x = radius * Math.cos(angle);
+                sphere.position.y = radius * Math.sin(angle) * 0.3;
+                sphere.position.z = radius * Math.sin(angle);
+                sphere.rotation.y += 0.02;
+            }
+            
+            for (var i = 0; i < pOrbitals.length; i++) {
+                var sphere = pOrbitals[i];
+                sphere.rotation.y += 0.015;
+            }
+            
+            for (var i = 0; i < dOrbitals.length; i++) {
+                var sphere = dOrbitals[i];
+                sphere.rotation.x += 0.01;
+                sphere.rotation.y += 0.01;
+                sphere.rotation.z += 0.005;
+            }
+            
+            for (var i = 0; i < fOrbitals.length; i++) {
+                var sphere = fOrbitals[i];
+                var angle = time * 0.1 + (i * Math.PI * 2);
+                var radius = 12;
+                sphere.position.x = radius * Math.cos(angle);
+                sphere.position.y = radius * Math.sin(angle) * Math.cos(angle);
+                sphere.position.z = radius * Math.sin(angle) * Math.sin(angle);
+                sphere.rotation.x += 0.005;
+                sphere.rotation.y += 0.008;
+            }
+            
+            for (var i = 0; i < orbitalRings.length; i++) {
+                orbitalRings[i].rotation.z += 0.001 * (i + 1);
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        init();
+    </script>
+</body>
+</html>
