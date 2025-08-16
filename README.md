@@ -19,7 +19,7 @@
 
 ## 🔗 라이브 데모
 
-[여기서 확인하세요](https://youncd@naver.com.github.io/abhidhamma-mind-visualization/)
+[여기서 확인하세요](https://youncd.github.io/abhidhamma-mind-visualization/)
 
 ## 📚 기술 스택
 
